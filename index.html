@@ -257,12 +257,33 @@ let VIAJES_CACHE = [];
    FECHA LOCAL (evita corrimientos)
 ================================ */
 function toLocalISOString(dateStr, timeStr) {
-  const d = new Date(`${dateStr}T${timeStr}:00`);
+  // dateStr: "YYYY-MM-DD"
+  // timeStr: "HH:MM"
+  if (!dateStr || !timeStr) return null;
+
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(dateStr);
+  const t = /^(\d{2}):(\d{2})$/.exec(timeStr);
+
+  if (!m || !t) return null;
+
+  const year = parseInt(m[1], 10);
+  const month = parseInt(m[2], 10) - 1; // 0-based
+  const day = parseInt(m[3], 10);
+  const hour = parseInt(t[1], 10);
+  const minute = parseInt(t[2], 10);
+
+  // Construir fecha local real
+  const d = new Date(year, month, day, hour, minute, 0);
+
+  if (isNaN(d.getTime())) return null;
+
   const pad = n => String(n).padStart(2, "0");
-  const tz = -d.getTimezoneOffset(); // minutes
-  const sign = tz >= 0 ? "+" : "-";
-  const hh = pad(Math.floor(Math.abs(tz) / 60));
-  const mm = pad(Math.abs(tz) % 60);
+
+  const tzMin = -d.getTimezoneOffset(); // minutes
+  const sign = tzMin >= 0 ? "+" : "-";
+  const hh = pad(Math.floor(Math.abs(tzMin) / 60));
+  const mm = pad(Math.abs(tzMin) % 60);
+
   return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}:00${sign}${hh}:${mm}`;
 }
 
