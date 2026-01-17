@@ -257,35 +257,38 @@ let VIAJES_CACHE = [];
    FECHA LOCAL (evita corrimientos)
 ================================ */
 function toLocalISOString(dateStr, timeStr) {
-  // dateStr: "YYYY-MM-DD"
-  // timeStr: "HH:MM"
   if (!dateStr || !timeStr) return null;
 
-  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(dateStr);
-  const t = /^(\d{2}):(\d{2})$/.exec(timeStr);
+  // date "YYYY-MM-DD"
+  const dparts = String(dateStr).split("-");
+  if (dparts.length !== 3) return null;
 
-  if (!m || !t) return null;
+  const year = parseInt(dparts[0], 10);
+  const month = parseInt(dparts[1], 10) - 1; // 0-based
+  const day = parseInt(dparts[2], 10);
 
-  const year = parseInt(m[1], 10);
-  const month = parseInt(m[2], 10) - 1; // 0-based
-  const day = parseInt(m[3], 10);
-  const hour = parseInt(t[1], 10);
-  const minute = parseInt(t[2], 10);
+  // time "HH:MM" or "HH:MM:SS"
+  const tparts = String(timeStr).split(":");
+  if (tparts.length < 2) return null;
 
-  // Construir fecha local real
-  const d = new Date(year, month, day, hour, minute, 0);
+  const hour = parseInt(tparts[0], 10);
+  const minute = parseInt(tparts[1], 10);
+  const second = tparts.length >= 3 ? parseInt(tparts[2], 10) : 0;
 
-  if (isNaN(d.getTime())) return null;
+  const dt = new Date(year, month, day, hour, minute, second);
+
+  if (isNaN(dt.getTime())) return null;
 
   const pad = n => String(n).padStart(2, "0");
 
-  const tzMin = -d.getTimezoneOffset(); // minutes
+  const tzMin = -dt.getTimezoneOffset();
   const sign = tzMin >= 0 ? "+" : "-";
   const hh = pad(Math.floor(Math.abs(tzMin) / 60));
   const mm = pad(Math.abs(tzMin) % 60);
 
-  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}:00${sign}${hh}:${mm}`;
+  return `${dt.getFullYear()}-${pad(dt.getMonth() + 1)}-${pad(dt.getDate())}T${pad(dt.getHours())}:${pad(dt.getMinutes())}:${pad(dt.getSeconds())}${sign}${hh}:${mm}`;
 }
+
 
 /* ===============================
    HELPERS
@@ -541,12 +544,16 @@ async function publicarViaje() {
       alert("La fecha/hora parece estar en el pasado. Revisala por favor.");
       return;
     }
+//debug temporal fecha hora error log
+    console.log("DEBUG fecha/hora:", { fecha, hora });
 
+    
     const fechaHoraISO = toLocalISOString(fecha, hora);
        if (!fechaHoraISO) {
-      alert("Fecha u hora inválida. Probá cambiar el navegador o volver a seleccionar fecha y hora.");
-      return;
-    }
+         alert(`Fecha u hora inválida.\nfecha="${fecha}"\nhora="${hora}"`);
+         return;
+       }
+
   
     const editToken = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
        const r = Math.random() * 16 | 0;
