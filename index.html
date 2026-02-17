@@ -3,638 +3,536 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="icon" href="./assets/favicon.ico" sizes="any">
-  <link rel="icon" type="image/png" href="./assets/FAVICON.png">
-  <title>ComVi · Comunidad Viajera</title>
+  <title>ComVi — Comunidad Viajera</title>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="assets/favicon.ico" />
 
   <style>
-    body { font-family: Arial, sans-serif; margin: 0; background: #fafafa; }
-    header { background: #0d6efd; color: white; padding: 12px; text-align: center; }
-    section { padding: 12px; }
-    input, select, button, textarea {
-      width: 100%;
-      padding: 10px;
-      margin: 6px 0;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-      box-sizing: border-box;
-    }
-    textarea { min-height: 90px; resize: vertical; }
-    button { background: #0d6efd; color: white; border: none; cursor: pointer; }
-    button.secondary { background: #6c757d; }
-    button:disabled { background:#adb5bd; cursor:not-allowed; }
-    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-
-    .viaje {
-      background: white;
-      padding: 12px;
-      margin-bottom: 10px;
-      border-radius: 10px;
-      box-shadow: 0 0 4px rgba(0,0,0,0.1);
-      border-left: 6px solid #0d6efd;
-    }
-    .ruta { font-size: 16px; font-weight: bold; margin-bottom: 4px; }
-    .chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 2px; }
-    .chip { font-size: 12px; background: #f1f3f5; padding: 4px 8px; border-radius: 999px; }
-    .muted { color: #666; font-size: 12px; }
-    .ad {
-      background: #f0f0f0; padding: 10px; margin: 10px;
-      text-align: center; border-radius: 8px; font-size: 14px;
-    }
-    footer { font-size: 12px; text-align: center; color: #666; padding: 10px; }
-
-    .inlineCheck {
-      display:flex; align-items:flex-start; gap:8px;
-      background:#fff; border:1px solid #ddd; padding:10px; border-radius:8px;
-      margin: 6px 0;
-    }
-    .inlineCheck input { width:auto; margin-top:2px; }
-
-    .manageLinkBox{
-      background:#fff;
-      border:1px solid #ddd;
-      border-radius:10px;
-      padding:10px;
-      margin-top:10px;
-      display:none;
-    }
-    .manageLinkBox code{
-      display:block;
-      background:#f6f8fa;
-      padding:10px;
-      border-radius:8px;
-      overflow:auto;
-      word-break:break-all;
-    }
-    .btnCopy{
-      margin-top:8px;
-      background:#198754;
+    :root{
+      --bg1:#070b18;
+      --bg2:#0a1b3a;
+      --c1:#0d6efd;
+      --c2:#00d4ff;
+      --c3:#7c3aed;
+      --txt:#eaf2ff;
+      --muted:#a9b7d0;
+      --card: rgba(255,255,255,.06);
+      --card2: rgba(255,255,255,.10);
+      --stroke: rgba(255,255,255,.14);
+      --shadow: 0 10px 40px rgba(0,0,0,.35);
+      --radius: 18px;
+      --max: 1100px;
     }
 
-    .topActions{
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Helvetica Neue", sans-serif;
+      color:var(--txt);
+      background: radial-gradient(1200px 800px at 20% 10%, rgba(13,110,253,.25), transparent 60%),
+                  radial-gradient(1000px 700px at 80% 20%, rgba(124,58,237,.22), transparent 60%),
+                  radial-gradient(900px 600px at 60% 80%, rgba(0,212,255,.18), transparent 55%),
+                  linear-gradient(180deg, var(--bg1), var(--bg2));
+      overflow-x:hidden;
+    }
+
+    /* --- Ambient animation layer --- */
+    .bg {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .blob {
+      position:absolute;
+      width: 520px;
+      height: 520px;
+      border-radius: 999px;
+      filter: blur(40px);
+      opacity: .55;
+      transform: translate3d(0,0,0);
+      mix-blend-mode: screen;
+      animation: floaty 14s ease-in-out infinite;
+    }
+    .blob.b1{ background: rgba(13,110,253,.55); left:-120px; top:-120px; animation-duration: 15s; }
+    .blob.b2{ background: rgba(0,212,255,.45); right:-160px; top:120px; animation-duration: 17s; }
+    .blob.b3{ background: rgba(124,58,237,.50); left:20%; bottom:-220px; animation-duration: 19s; }
+
+    @keyframes floaty{
+      0%,100%{ transform: translate3d(0,0,0) scale(1); }
+      35%{ transform: translate3d(40px, -30px, 0) scale(1.05); }
+      70%{ transform: translate3d(-30px, 20px, 0) scale(.98); }
+    }
+
+    /* floating particles */
+    .spark {
+      position:absolute;
+      width: 10px; height: 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.35);
+      filter: blur(1px);
+      opacity:.35;
+      animation: drift linear infinite;
+    }
+    @keyframes drift{
+      from{ transform: translate3d(0, 120vh, 0); }
+      to{ transform: translate3d(0, -20vh, 0); }
+    }
+
+    /* --- Layout --- */
+    .wrap{
+      position: relative;
+      z-index: 1;
+      min-height: 100%;
       display:flex;
-      justify-content:center;
-      gap:10px;
-      margin-top:8px;
-      flex-wrap:wrap;
-    }
-    .topActions a{
-      display:inline-block;
-      background: rgba(255,255,255,.15);
-      color:#fff;
-      text-decoration:none;
-      padding:6px 10px;
-      border-radius:999px;
-      font-size:12px;
+      flex-direction:column;
     }
 
-    .infoBox{
-      background:#fff;
-      border:1px solid #ddd;
-      border-radius:10px;
-      padding:10px;
-      margin: 10px 12px 0;
-      font-size:13px;
+    .topbar{
+      position: sticky;
+      top:0;
+      z-index: 3;
+      backdrop-filter: blur(10px);
+      background: rgba(7,11,24,.45);
+      border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+    .topbar-inner{
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 14px 18px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      text-decoration:none;
+      color:inherit;
+    }
+    .brand img{
+      height: 34px;
+      width:auto;
+      display:block;
+      filter: drop-shadow(0 6px 18px rgba(0,0,0,.35));
+    }
+    .brand .name{
+      display:flex;
+      flex-direction:column;
+      line-height:1.1;
+    }
+    .brand .name strong{ font-size: 14px; letter-spacing:.2px; }
+    .brand .name span{ font-size: 12px; color: var(--muted); }
+
+    .top-actions{ display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end; }
+    .btn{
+      appearance:none;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      color: var(--txt);
+      padding: 10px 12px;
+      border-radius: 12px;
+      text-decoration:none;
+      font-size: 13px;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      cursor:pointer;
+      transition: transform .15s ease, background .2s ease, border-color .2s ease;
+      user-select:none;
+    }
+    .btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.10); border-color: rgba(255,255,255,.22); }
+    .btn.primary{
+      background: linear-gradient(135deg, rgba(13,110,253,.95), rgba(0,212,255,.70));
+      border-color: rgba(255,255,255,.18);
+      box-shadow: 0 14px 40px rgba(13,110,253,.25);
+      color: #061022;
+      font-weight: 700;
+    }
+    .btn.primary:hover{ filter: brightness(1.02); }
+
+    .hero{
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 56px 18px 28px;
+      display:grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap: 22px;
+      align-items:start;
+    }
+
+    @media (max-width: 900px){
+      .hero{ grid-template-columns: 1fr; padding-top: 34px; }
+      .top-actions{ justify-content:stretch; }
+      .btn{ flex:1; justify-content:center; }
+    }
+
+    .pill{
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+      font-size: 12px;
+      color: var(--muted);
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.12);
+      padding: 8px 12px;
+      border-radius: 999px;
+      width: fit-content;
+    }
+
+    h1{
+      margin: 14px 0 10px;
+      font-size: clamp(30px, 4.2vw, 52px);
+      line-height: 1.02;
+      letter-spacing: -0.02em;
+    }
+    .lead{
+      margin: 0 0 16px;
+      color: rgba(234,242,255,.88);
+      font-size: 16px;
+      line-height:1.65;
+      max-width: 62ch;
+    }
+
+    .hero-cta{
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-top: 18px;
+    }
+
+    .card{
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .panel{
+      padding: 18px;
+    }
+
+    .kpis{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .kpi{
+      padding: 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.05);
+    }
+    .kpi strong{ display:block; font-size: 14px; }
+    .kpi span{ color: var(--muted); font-size: 12px; }
+
+    .section{
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 22px 18px;
+    }
+
+    .grid3{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+    @media (max-width: 900px){
+      .grid3{ grid-template-columns: 1fr; }
+    }
+
+    .feature{
+      padding: 16px;
+      border-radius: var(--radius);
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.05);
+      min-height: 120px;
+    }
+    .feature h3{ margin: 0 0 8px; font-size: 15px; }
+    .feature p{ margin:0; color: var(--muted); line-height:1.55; font-size: 13px; }
+
+    .split{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      align-items: start;
+    }
+    @media (max-width: 900px){
+      .split{ grid-template-columns: 1fr; }
+    }
+
+    .list{
+      margin: 10px 0 0;
+      padding: 0;
+      list-style: none;
+      display:grid;
+      gap: 10px;
+    }
+    .list li{
+      display:flex;
+      gap: 10px;
+      align-items:flex-start;
+      padding: 12px;
+      border-radius: 14px;
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(255,255,255,.10);
+    }
+    .dot{
+      width: 10px; height: 10px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--c1), var(--c2));
+      margin-top: 6px;
+      flex: 0 0 auto;
+      box-shadow: 0 0 0 6px rgba(13,110,253,.14);
+    }
+    .list b{ display:block; font-size: 13px; margin-bottom: 2px; }
+    .list span{ color: var(--muted); font-size: 13px; line-height: 1.5; }
+
+    .ctaBox{
+      padding: 18px;
+      border-radius: var(--radius);
+      border: 1px solid rgba(255,255,255,.12);
+      background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.06));
+      box-shadow: var(--shadow);
+    }
+    .ctaBox h2{ margin:0 0 6px; font-size: 18px; }
+    .ctaBox p{ margin:0 0 12px; color: var(--muted); line-height:1.6; }
+
+    .footer{
+      margin-top: 26px;
+      padding: 26px 18px 34px;
+      color: rgba(234,242,255,.72);
+      text-align:center;
+      border-top: 1px solid rgba(255,255,255,.08);
+      background: rgba(0,0,0,.10);
+    }
+    .footer small{ display:block; margin-top: 8px; color: rgba(234,242,255,.55); }
+
+    /* --- Reveal on scroll --- */
+    .reveal{
+      opacity: 0;
+      transform: translateY(16px);
+      transition: opacity .7s ease, transform .7s ease;
+    }
+    .reveal.on{
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Reduce motion */
+    @media (prefers-reduced-motion: reduce){
+      .blob, .spark{ animation: none !important; }
+      .reveal{ opacity:1 !important; transform:none !important; transition:none !important; }
+      .btn{ transition:none !important; }
     }
   </style>
 </head>
 
 <body>
-<header>
-  <div style="display:flex;align-items:center;justify-content:center;gap:10px;">
-    <img src="./assets/LOGO.png" alt="ComVi" style="height:34px;width:auto;">
-    <div>
-      <h2 style="margin:0;">ComVi</h2>
-      <div style="font-size:12px;opacity:.9;">Comunidad Viajera</div>
-    </div>
+  <!-- Animated background -->
+  <div class="bg" aria-hidden="true">
+    <div class="blob b1"></div>
+    <div class="blob b2"></div>
+    <div class="blob b3"></div>
+    <!-- sparks injected by JS -->
   </div>
 
-  <div class="topActions">
-    <a href="mailto:admcomvi@gmail.com">📢 Anunciar</a>
-    <a href="mailto:admcomvi@gmail.com?subject=Sugerencia%20ComVi%20MVP%200.1.1">✉️ Sugerencias</a>
-    <a href="https://link.mercadopago.com.ar/donacomvi" target="_blank">❤️ Donar</a>
-  </div>
-</header>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="topbar-inner">
+        <a class="brand" href="#">
+          <img src="assets/LOGO.png" alt="ComVi">
+          <div class="name">
+            <strong>ComVi</strong>
+            <span>Comunidad viajera · Argentina</span>
+          </div>
+        </a>
 
-
-<!-- PUBLICIDAD SUPERIOR -->
-<div class="ad">
-  <strong>Publicidad</strong><br>
-  Servicio Técnico 💻 · 
-  <a href="https://wa.me/5491158025832?text=Hola%21%20Te%20escribo%20desde%20ComVi%20👋%0AVi%20la%20publicidad%20en%20la%20plataforma."
-     target="_blank"
-     style="text-decoration:none;font-weight:bold;">
-     WhatsApp 11 5802-5832
-  </a>
-  · 📲 Asistencia Remota
-</div>
-
-
-<section>
-  <h3>📍 Publicar viaje (conductor)</h3>
-
-  <div class="row">
-    <input type="text" id="origen" placeholder="Origen (ej: CABA / La Plata)">
-    <input type="text" id="destino" placeholder="Destino (ej: Gesell)">
-  </div>
-
-  <div class="row">
-    <input type="date" id="fecha">
-    <input type="time" id="hora">
-  </div>
-
-  <div class="inlineCheck" title="Marcá esto si la hora no es exacta (ej: cerca de las 17)">
-    <input type="checkbox" id="horaAprox">
-    <label for="horaAprox">
-      <strong>Horario aproximado</strong><br>
-      <span class="muted">Si no es exacto, marcá esto (ej: “cerca de las 17”).</span>
-    </label>
-  </div>
-
-  <div class="row">
-    <input type="number" id="asientos" placeholder="💺 Lugares disponibles (ej: 2)" min="1">
-  </div>
-
-  <div class="inlineCheck" title="Marcá esto si el precio se define por chat">
-    <input type="checkbox" id="precioAConvenir" />
-    <label for="precioAConvenir">
-      <strong>Precio a convenir</strong><br>
-      <span class="muted">Se coordina por WhatsApp (opcional).</span>
-    </label>
-  </div>
-
-  <input type="number" id="precio" placeholder="💰 Precio por asiento (ej: 30000)" min="0">
-
-  <select id="equipaje">
-    <option value="">🧳 Equipaje (opcional)</option>
-    <option value="mochila">🎒 Mochila</option>
-    <option value="bolso">🧳 Bolso chico</option>
-    <option value="valija">🧳 Valija</option>
-    <option value="aconvenir">🤝 A convenir</option>
-  </select>
-
-  <textarea id="detalles" maxlength="220"
-    placeholder="📝 Detalles (punto de encuentro, paradas, equipaje, música, etc.) máx 220"></textarea>
-
-  <input type="tel" id="telefono" placeholder="WhatsApp del conductor (no se publica). El admin te conecta." inputmode="numeric">
-
-  <button id="btnPublicar" type="button" onclick="publicarViaje()">Publicar viaje</button>
-  <div class="muted">Al publicar, te damos un <strong>link privado</strong> para gestionar asientos, pausar y editar.</div>
-
-  <div class="manageLinkBox" id="manageLinkBox">
-    <strong>🔐 Link privado del conductor (guardalo)</strong>
-    <div class="muted" style="margin-top:4px;">
-      Con este link podés administrar tu publicación. Si lo perdés, pedíselo al admin.
-    </div>
-    <code id="manageLink"></code>
-    <button class="btnCopy" type="button" onclick="copiarLink()">📋 Copiar link</button>
-    <div class="muted" id="copyMsg" style="margin-top:6px;"></div>
-  </div>
-</section>
-
-<!-- DONACIÓN -->
-<section>
-  <a href="https://link.mercadopago.com.ar/donacomvi"
-     target="_blank"
-     style="display:block;padding:12px;background:#009ee3;color:white;
-            text-align:center;border-radius:8px;text-decoration:none;">
-    ❤️ Donar para sostener ComVi
-  </a>
-</section>
-
-<!-- PUBLICIDAD MEDIA -->
-<div class="ad">
-  ¿Querés anunciar acá?<br>
-  📧 <a href="mailto:admcomvi@gmail.com">admcomvi@gmail.com</a>
-</div>
-
-<div class="infoBox">
-  <strong>Importante:</strong> por seguridad, ComVi <strong>no publica teléfonos</strong>.
-  Cuando tocás “Coordinar por WhatsApp”, el admin te conecta con el conductor.
-</div>
-
-<section>
-  <h3>🗺️ Viajes disponibles</h3>
-  <div id="listaViajes"></div>
-</section>
- 
-<footer>
-  Visitas: <span id="contador"></span><br>
-  <span class="muted">
-    ComVi · Comunidad Viajera · MVP 0.1.2 ·
-    <a href="./terminos.html" style="color:#666;text-decoration:underline;">
-      Términos y Privacidad
-    </a>
-  </span>
-</footer>
-
-<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-
-<script>
-/* ===============================
-   CONFIG SUPABASE
-================================ */
-function obtenerUserHash() {
-  let hash = localStorage.getItem("comvi_user_hash");
-  if (!hash) {
-    // UUID compatible con navegadores viejos
-    hash = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-      const r = Math.random() * 16 | 0;
-      const v = c === 'x' ? r : (r & 0x3 | 0x8);
-      return v.toString(16);
-    });
-    localStorage.setItem("comvi_user_hash", hash);
-  }
-  return hash;
-}
-
-const SUPABASE_URL = "https://amwokcrudsupfkpgyxia.supabase.co";
-const SUPABASE_KEY = "sb_publishable_ZuUe5CTChHQwW5M3qldKqw_zU4MO0qM";
-const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-// ADMIN WhatsApp intermediario
-const telefonoAdmin = "5491164003390";
-
-let VIAJES_CACHE = [];
-
-/* ===============================
-   FECHA LOCAL (evita corrimientos)
-================================ */
-function toLocalISOString(dateStr, timeStr) {
-  if (!dateStr || !timeStr) return null;
-
-  // date "YYYY-MM-DD"
-  const dparts = String(dateStr).split("-");
-  if (dparts.length !== 3) return null;
-
-  const year = parseInt(dparts[0], 10);
-  const month = parseInt(dparts[1], 10) - 1; // 0-based
-  const day = parseInt(dparts[2], 10);
-
-  // time "HH:MM" or "HH:MM:SS"
-  const tparts = String(timeStr).split(":");
-  if (tparts.length < 2) return null;
-
-  const hour = parseInt(tparts[0], 10);
-  const minute = parseInt(tparts[1], 10);
-  const second = tparts.length >= 3 ? parseInt(tparts[2], 10) : 0;
-
-  const dt = new Date(year, month, day, hour, minute, second);
-
-  if (isNaN(dt.getTime())) return null;
-
-  const pad = n => String(n).padStart(2, "0");
-
-  const tzMin = -dt.getTimezoneOffset();
-  const sign = tzMin >= 0 ? "+" : "-";
-  const hh = pad(Math.floor(Math.abs(tzMin) / 60));
-  const mm = pad(Math.abs(tzMin) % 60);
-
-  return `${dt.getFullYear()}-${pad(dt.getMonth() + 1)}-${pad(dt.getDate())}T${pad(dt.getHours())}:${pad(dt.getMinutes())}:${pad(dt.getSeconds())}${sign}${hh}:${mm}`;
-}
-
-
-/* ===============================
-   HELPERS
-================================ */
-function formatearFecha(fechaISO) {
-  const d = new Date(fechaISO);
-  return d.toLocaleString("es-AR", { dateStyle: "short", timeStyle: "short" });
-}
-function escapeHtml(str) {
-  return (str || "").replace(/[&<>"']/g, m => ({
-    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
-  }[m]));
-}
-
-/* ===============================
-   UI (precio a convenir)
-================================ */
-function setupPrecioAConvenir() {
-  const chk = document.getElementById("precioAConvenir");
-  const precioInput = document.getElementById("precio");
-
-  function apply() {
-    const on = chk.checked;
-    precioInput.disabled = on;
-    if (on) precioInput.value = "";
-  }
-  chk.addEventListener("change", apply);
-  apply();
-}
-
-/* ===============================
-   VISITAS
-================================ */
-async function registrarVisita() {
-  const { error } = await sb
-    .from("visitas")
-    .insert([{ user_hash: obtenerUserHash() }]);
-  if (error) console.error("Error guardando visita", error);
-}
-
-async function cargarContador() {
-  const { count, error } = await sb
-    .from("visitas")
-    .select("*", { count: "exact", head: true });
-  if (error) return console.error("Error contando visitas", error);
-  document.getElementById("contador").innerText = count ?? 0;
-}
-
-/* ===============================
-   MOSTRAR VIAJES
-================================ */
-async function mostrarViajes() {
-  const { data, error } = await sb
-    .from("viajes")
-    .select("*")
-    .eq("activo", true)
-    .order("created_at", { ascending: false });
-
-  if (error) {
-    alert("Error cargando viajes");
-    console.error(error);
-    return;
-  }
-
-  VIAJES_CACHE = data || [];
-  renderViajes();
-}
-
-function renderViajes() {
-  const contenedor = document.getElementById("listaViajes");
-  contenedor.innerHTML = "";
-
-  if (VIAJES_CACHE.length === 0) {
-    contenedor.innerHTML = `<div class="muted">Todavía no hay viajes publicados.</div>`;
-    return;
-  }
-
-  const disponibles = VIAJES_CACHE.filter(v =>
-    v.asientos !== null && v.asientos !== undefined && v.asientos > 0
-  );
-
-  const completos = VIAJES_CACHE.filter(v =>
-    v.asientos !== null && v.asientos !== undefined && v.asientos <= 0
-  );
-
-  const sinDato = VIAJES_CACHE.filter(v =>
-    v.asientos === null || v.asientos === undefined
-  );
-
-  const ordenados = [...disponibles, ...completos, ...sinDato];
-
-  ordenados.forEach(v => {
-    const div = document.createElement("div");
-    div.className = "viaje";
-
-    const chips = [];
-
-    let completo = false;
-    if (v.asientos !== null && v.asientos !== undefined) {
-      if (v.asientos > 0) chips.push(`💺 ${v.asientos} lugares libres`);
-      else {
-        chips.push(`💺 Completo (sin lugares)`);
-        completo = true;
-      }
-    } else {
-      chips.push(`💺 (sin dato)`);
-      completo = true;
-    }
-
-    const precioTxt = (v.precio === null || v.precio === undefined)
-      ? `💰 A convenir`
-      : `💰 $${v.precio}`;
-    chips.push(precioTxt);
-
-    if (v.equipaje) chips.push(`🧳 ${v.equipaje}`);
-    if (v.hora_aprox) chips.push("🕒 aprox");
-
-    const chipsHtml = `<div class="chips">${chips.map(c => `<span class="chip">${c}</span>`).join("")}</div>`;
-
-    div.innerHTML = `
-      <div class="ruta">${escapeHtml(v.origen)} → ${escapeHtml(v.destino)}</div>
-      <div>🕒 ${formatearFecha(v.fecha_hora)}${v.hora_aprox ? ' <span class="muted">(aprox)</span>' : ''}</div>
-      ${chipsHtml}
-      ${v.comentario ? `<div style="margin-top:6px;">📝 ${escapeHtml(v.comentario)}</div>` : ""}
-
-      <div style="margin-top:10px;">
-        ${
-          completo
-            ? `<button disabled style="background:#adb5bd;cursor:not-allowed;">🚫 Completo (sin lugares)</button>
-               <div class="muted" style="margin-top:6px;">Este viaje ya tiene los asientos reservados.</div>`
-            : `<button onclick="contactarAdmin(${v.id})">💬 Coordinar por WhatsApp</button>
-               <div class="muted" style="margin-top:6px;">El admin te conecta con el conductor (sin teléfonos públicos).</div>`
-        }
+        <div class="top-actions">
+          <a class="btn" href="#fundadores">🤝 Socio fundador</a>
+          <a class="btn primary" href="https://link.mercadopago.com.ar/donacomvi" target="_blank" rel="noopener">❤️ Donar</a>
+        </div>
       </div>
-    `;
+    </div>
 
-    contenedor.appendChild(div);
-  });
-}
+    <!-- HERO -->
+    <section class="hero">
+      <div class="reveal">
+        <div class="pill">🚧 Sitio en desarrollo · Acceso anticipado por invitación</div>
 
-/* ===============================
-   CONTACTO (admin intermediario)
-================================ */
-async function contactarAdmin(viajeId) {
-  const userHash = obtenerUserHash();
-  const v = VIAJES_CACHE.find(x => x.id === viajeId);
+        <h1>Estamos construyendo una aplicación para la comunidad viajera.</h1>
 
-  const { error } = await sb
-    .from("contactos")
-    .insert([{
-      viaje_id: viajeId,
-      user_hash: userHash,
-      estado: "nuevo"
-    }]);
+        <p class="lead">
+          ComVi nace para ordenar lo que hoy se coordina en grupos: publicar viajes, ver asientos disponibles,
+          y conectar personas de forma simple. Ahora estamos en etapa de construcción y validación.
+        </p>
 
-  if (error) {
-    alert("Error registrando contacto");
-    console.error(error);
-    return;
-  }
+        <div class="hero-cta">
+          <a class="btn primary" href="https://link.mercadopago.com.ar/donacomvi" target="_blank" rel="noopener">❤️ Donar para sostener ComVi</a>
+          <a class="btn" href="#fundadores">Ver beneficios de fundador</a>
+        </div>
 
-  const precioTxt = (v?.precio === null || v?.precio === undefined) ? "A convenir" : `$${v?.precio}`;
+        <p class="muted" style="margin-top:10px;">
+          Tu aporte acelera desarrollo, mejoras de seguridad y lanzamiento de la versión con login.
+        </p>
+      </div>
 
-  const mensajePlano =
-`Hola! Quiero coordinar un viaje publicado en ComVi.
+      <aside class="card panel reveal">
+        <div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start;">
+          <div>
+            <strong style="font-size:15px;">📌 En qué estamos</strong>
+            <div class="muted" style="margin-top:6px;line-height:1.6;">
+              MVP en marcha + pruebas reales. Próximo paso: ComVi 0.2 con login y protección anti-spam.
+            </div>
+          </div>
+          <div class="pill" style="white-space:nowrap;">⚡ Etapa MVP</div>
+        </div>
 
-Ruta: ${v?.origen} → ${v?.destino}
-Fecha/Hora: ${v?.fecha_hora ? formatearFecha(v.fecha_hora) : "-"}${v?.hora_aprox ? " (aprox)" : ""}
-Lugares: ${v?.asientos ?? "-"}
-Precio: ${precioTxt}
-Equipaje: ${v?.equipaje ?? "-"}
-Detalles: ${v?.comentario ?? "-"}
-ID publicación: ${v?.id}`;
+        <div class="kpis">
+          <div class="kpi">
+            <strong>+ Organización</strong>
+            <span>menos ruido, más claridad</span>
+          </div>
+          <div class="kpi">
+            <strong>+ Confianza</strong>
+            <span>perfiles y reputación</span>
+          </div>
+          <div class="kpi">
+            <strong>+ Seguridad</strong>
+            <span>reducir estafas y spam</span>
+          </div>
+          <div class="kpi">
+            <strong>+ Comunidad</strong>
+            <span>mismo espíritu, mejor sistema</span>
+          </div>
+        </div>
+      </aside>
+    </section>
 
-  const mensaje = encodeURIComponent(mensajePlano);
-  window.open(`https://wa.me/${telefonoAdmin}?text=${mensaje}`, "_blank");
-}
+    <!-- FEATURES -->
+    <section class="section reveal" id="que">
+      <div class="grid3">
+        <div class="feature card">
+          <h3>🚗 Publicación simple</h3>
+          <p>Chofer publica origen/destino, fecha/hora, asientos y detalles. Sin vueltas.</p>
+        </div>
+        <div class="feature card">
+          <h3>🧭 Búsqueda clara</h3>
+          <p>Encontrás más rápido lo que necesitás, sin scrollear interminable en grupos.</p>
+        </div>
+        <div class="feature card">
+          <h3>🛡️ Próximo: login</h3>
+          <p>Perfiles, reputación y controles para reducir spam y mejorar la confianza.</p>
+        </div>
+      </div>
+    </section>
 
-/* ===============================
-   LINK DE GESTIÓN (chofer)
-================================ */
-function baseDirUrl() {
-  const url = new URL(window.location.href);
-  url.hash = "";
-  url.search = "";
-  url.pathname = url.pathname.replace(/\/[^\/]*$/, "/");
-  return url.toString().replace(/\/$/, "");
-}
-async function copiarLink() {
-  const link = document.getElementById("manageLink").innerText;
-  try {
-    await navigator.clipboard.writeText(link);
-    document.getElementById("copyMsg").innerText = "Link copiado ✅";
-  } catch (e) {
-    document.getElementById("copyMsg").innerText = "No pude copiar (tu navegador bloqueó). Copialo manualmente.";
-  }
-}
+    <!-- FOUNDERS -->
+    <section class="section split reveal" id="fundadores">
+      <div class="card panel">
+        <h2 style="margin:0 0 6px;">🤝 Ser socio fundador (ahora)</h2>
+        <p class="muted" style="margin:0;line-height:1.6;">
+          Estás entrando en la etapa donde el apoyo vale el doble: acelera decisiones, financia iteraciones
+          y define el estándar de la comunidad.
+        </p>
 
-/* ===============================
-   PUBLICAR VIAJE (hardening)
-================================ */
-async function publicarViaje() {
-  const btn = document.getElementById("btnPublicar");
-  btn.disabled = true;
-  const prevTxt = btn.textContent;
-  btn.textContent = "Publicando…";
+        <ul class="list">
+          <li>
+            <div class="dot"></div>
+            <div>
+              <b>Acceso anticipado</b>
+              <span>Probás ComVi 0.2 antes del público general y sugerís mejoras.</span>
+            </div>
+          </li>
+          <li>
+            <div class="dot"></div>
+            <div>
+              <b>Comunidad fundadora</b>
+              <span>Grupo privado para feedback, votaciones y prioridades del roadmap.</span>
+            </div>
+          </li>
+          <li>
+            <div class="dot"></div>
+            <div>
+              <b>Reconocimiento</b>
+              <span>Mención (opcional) como fundador/a en el sitio y comunicaciones del proyecto.</span>
+            </div>
+          </li>
+        </ul>
+      </div>
 
-  try {
-    const origen = document.getElementById("origen").value.trim();
-    const destino = document.getElementById("destino").value.trim();
-    const fecha = document.getElementById("fecha").value;
-    const hora = document.getElementById("hora").value;
-    const telefono = document.getElementById("telefono").value.trim();
+      <div class="ctaBox reveal">
+        <h2>❤️ Aportá y acelerá el lanzamiento</h2>
+        <p>
+          Tu donación sostiene infraestructura, diseño, seguridad y el salto a la versión con login.
+        </p>
 
-    const horaAprox = document.getElementById("horaAprox").checked;
-    const asientos = parseInt(document.getElementById("asientos").value, 10) || null;
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          <a class="btn primary" href="https://link.mercadopago.com.ar/donacomvi" target="_blank" rel="noopener">Donar con MercadoPago</a>
+          <a class="btn" href="mailto:admcomvi@gmail.com">📩 Contacto</a>
+        </div>
 
-    const precioAConvenir = document.getElementById("precioAConvenir").checked;
-    const precio = precioAConvenir ? null : (parseInt(document.getElementById("precio").value, 10) || null);
+        <div class="muted" style="margin-top:10px;">
+          Si querés sumarte como socio fundador: escribinos y te contamos cómo participar en la etapa MVP.
+        </div>
+      </div>
+    </section>
 
-    const equipaje = document.getElementById("equipaje").value || null;
-    const detalles = document.getElementById("detalles").value.trim() || null;
+    <footer class="footer">
+      <div>ComVi · Comunidad viajera</div>
+      <small>© <span id="year"></span> · Sitio en construcción · Argentina</small>
+    </footer>
+  </div>
 
-    if (!origen || !destino || !fecha || !hora || !telefono) {
-      alert("Completá Origen, Destino, Fecha, Hora y WhatsApp del conductor");
-      return;
-    }
-    if (origen.length < 3 || destino.length < 3) {
-      alert("Origen y destino deben tener al menos 3 caracteres.");
-      return;
-    }
+  <script>
+    // Year
+    document.getElementById("year").textContent = new Date().getFullYear();
 
-    const telDigits = telefono.replace(/\D/g, "");
-    if (telDigits.length < 10) {
-      alert("Ingresá un WhatsApp válido (solo números, con código de área).");
-      return;
-    }
+    // Reveal on scroll (no libs)
+    (function(){
+      const els = Array.from(document.querySelectorAll(".reveal"));
+      const io = new IntersectionObserver((entries) => {
+        for (const e of entries){
+          if (e.isIntersecting){
+            e.target.classList.add("on");
+            io.unobserve(e.target);
+          }
+        }
+      }, { threshold: 0.12 });
 
-    if (!asientos || asientos < 1) {
-      alert("Indicá cuántos lugares disponibles hay");
-      return;
-    }
-    if (precio !== null && precio < 0) {
-      alert("El precio no puede ser negativo");
-      return;
-    }
+      els.forEach(el => io.observe(el));
+    })();
 
-    // Validar que sea futuro (con margen)
-    const d = new Date(`${fecha}T${hora}:00`);
-    const ahora = new Date();
-    const margenMin = 10; // minutos
-    if (d.getTime() < (ahora.getTime() - margenMin * 60 * 1000)) {
-      alert("La fecha/hora parece estar en el pasado. Revisala por favor.");
-      return;
-    }
-//debug temporal fecha hora error log
-    console.log("DEBUG fecha/hora:", { fecha, hora });
+    // Floating sparks
+    (function(){
+      const bg = document.querySelector(".bg");
+      const reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (!bg || reduced) return;
 
-    
-    const fechaHoraISO = toLocalISOString(fecha, hora);
-       if (!fechaHoraISO) {
-         alert(`Fecha u hora inválida.\nfecha="${fecha}"\nhora="${hora}"`);
-         return;
-       }
-
-  
-    const editToken = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-       const r = Math.random() * 16 | 0;
-       const v = c === 'x' ? r : (r & 0x3 | 0x8);
-       return v.toString(16);
-    });
-
-
-    const payload = {
-      origen,
-      destino,
-      fecha_hora: fechaHoraISO,
-      telefono,
-      tipo: "chofer",
-      asientos,
-      precio,
-      equipaje,
-      hora_aprox: horaAprox,
-      comentario: detalles,
-      punto_encuentro: null,
-      activo: true,
-      edit_token: editToken
-    };
-
-    const { data, error } = await sb
-      .from("viajes")
-      .insert([payload])
-      .select("id")
-      .single();
-
-    if (error) {
-      console.error("SUPABASE ERROR:", error);
-      alert("Error al publicar");
-      return;
-    }
-
-    alert("Viaje publicado ✅");
-
-    const id = data?.id;
-    if (id) {
-      const link = `${baseDirUrl()}/chofer.html?viaje=${encodeURIComponent(id)}&token=${encodeURIComponent(editToken)}`;
-      document.getElementById("manageLink").innerText = link;
-      document.getElementById("manageLinkBox").style.display = "block";
-      document.getElementById("copyMsg").innerText = "";
-      window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
-    }
-
-    document.getElementById("origen").value = "";
-    document.getElementById("destino").value = "";
-    document.getElementById("fecha").value = "";
-    document.getElementById("hora").value = "";
-    document.getElementById("horaAprox").checked = false;
-    document.getElementById("asientos").value = "";
-    document.getElementById("precioAConvenir").checked = false;
-    document.getElementById("precio").value = "";
-    document.getElementById("equipaje").value = "";
-    document.getElementById("detalles").value = "";
-    document.getElementById("telefono").value = "";
-
-    setupPrecioAConvenir();
-    mostrarViajes();
-
-  } finally {
-    btn.disabled = false;
-    btn.textContent = prevTxt;
-  }
-}
-
-/* ===============================
-   INIT
-================================ */
-window.addEventListener("load", () => {
-  setupPrecioAConvenir();
-  registrarVisita();
-  cargarContador();
-  mostrarViajes();
-});
-</script>
+      const count = 18;
+      for (let i=0;i<count;i++){
+        const s = document.createElement("div");
+        s.className = "spark";
+        const left = Math.random()*100;
+        const size = 6 + Math.random()*10;
+        const dur = 10 + Math.random()*18;
+        const delay = -Math.random()*dur;
+        s.style.left = left.toFixed(2) + "vw";
+        s.style.width = size + "px";
+        s.style.height = size + "px";
+        s.style.opacity = (0.18 + Math.random()*0.22).toFixed(2);
+        s.style.animationDuration = dur.toFixed(2) + "s";
+        s.style.animationDelay = delay.toFixed(2) + "s";
+        bg.appendChild(s);
+      }
+    })();
+  </script>
 </body>
 </html>
